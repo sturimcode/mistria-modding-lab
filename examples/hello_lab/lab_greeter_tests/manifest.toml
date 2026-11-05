@@ -1,0 +1,5 @@
+name = "Lab Greeter Tests"
+author = "mistria_modding_lab"
+version = "1.0.0"
+minInstallerVersion = "0.17.0"
+manifestVersion = "2"

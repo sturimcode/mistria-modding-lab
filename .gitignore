@@ -1,0 +1,9 @@
+# Your own paths and the game copy. Neither belongs in a public repo.
+/lab.toml
+/work/
+/lab-*.toml
+__pycache__/
+*.pyc
+# Game and save files, wherever they appear.
+*.sav
+assets*.zip
