@@ -20,7 +20,7 @@ Results for the first public release, version 0.1.0, on 5 November 2026. Tested 
 | Real-file guard over saves and the Steam install | Pass: reported unchanged on every step |
 | Independent check, written apart from the guard | Pass: 554 real files hashed before and after all runs, 0 differences |
 | Muted, and hidden or off-screen | Pass: hidden and off-screen both ran. Muting is set in settings, not measured from audio output. |
-| Refuses to run beside another game process | Pass: seen while another lab ran |
+| Refuses to run beside another game process | Pass: `doctor` flagged another lab's running game. `launch` calls the same process check, but no launch was attempted beside it. |
 | Unknown MOMI arguments refused | Pass: unit tested, including `--help` |
 | Stops if MOMI could find a second game copy, or picks the wrong folder | Pass: unit tested with a stand-in for MOMI, not with a real second copy |
 | Deletes only folders it marked as its own | Pass: unit tested |
