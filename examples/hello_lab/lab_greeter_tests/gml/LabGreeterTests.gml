@@ -46,6 +46,20 @@ function lab_greeter_tests_player_in_world() {
     return { passed: instance_exists(obj_ari) };
 }
 
+// Writes a save in the lab profile, so a later run can use --mode continue.
+function lab_greeter_tests_make_save() {
+    lab_greeter_tests_guard();
+    var _path = exact_save_path(Game.unique_identifier, true, 123456789);
+    ARI.save_position = new LocationPosition(CURRENT_LOCATION_ID, Vec2(obj_ari.x, obj_ari.y));
+    save_game(_path);
+    return { passed: file_exists(_path), save_id: Game.unique_identifier };
+}
+
+function lab_greeter_tests_save_id() {
+    lab_greeter_tests_guard();
+    return { passed: instance_exists(obj_ari), save_id: Game.unique_identifier };
+}
+
 function lab_greeter_tests_tick() {
     var _state = lab_greeter_tests_state();
     if (_state.registered || environment_get_variable("MISTRIA_LAB") != "1") return;
@@ -55,6 +69,8 @@ function lab_greeter_tests_tick() {
     mmapi_debug_register_fn("lab_greeter_tests.message_format", lab_greeter_tests_message_format, {});
     mmapi_debug_register_fn("lab_greeter_tests.hook_fired", lab_greeter_tests_hook_fired, {});
     mmapi_debug_register_fn("lab_greeter_tests.player_in_world", lab_greeter_tests_player_in_world, {});
+    mmapi_debug_register_fn("lab_greeter_tests.make_save", lab_greeter_tests_make_save, {});
+    mmapi_debug_register_fn("lab_greeter_tests.save_id", lab_greeter_tests_save_id, {});
 }
 
 mmapi_mod_declare("lab_greeter_tests", "1.0.0");

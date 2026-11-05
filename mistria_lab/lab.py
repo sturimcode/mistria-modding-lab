@@ -317,7 +317,7 @@ class Lab:
         out.mkdir(parents=True, exist_ok=True)
         for name in guard.ENGINE_FILES:
             live, held = cfg.profile_root / name, self.hold / name
-            if live.exists():
+            if live.exists() and not (held.exists() and guard.sha(live) == guard.sha(held)):
                 shutil.copy2(live, out / name)
             if held.exists():
                 shutil.copy2(held, live)

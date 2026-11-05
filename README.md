@@ -104,7 +104,7 @@ calls = [
 
 The lab calls `ready_fn` until it returns `active: true`, then runs each entry in `calls`. A call passes only if it raises no error and returns `passed: true`.
 
-To see a failure, change `"Welcome to Mistria."` in `LabGreeter.gml`, then run `python lab.py install` and `python lab.py test`. `message_format` reports `FAIL` with the values it received.
+To see a failure, change `"Welcome to Mistria."` in `LabGreeter.gml`, then run `python lab.py install` and `python lab.py test`. `message_format` and `hook_fired` report `FAIL` with the values they received, and `test` exits with code 1.
 
 ## Test your own mod
 
@@ -122,6 +122,23 @@ python lab.py stop
 ```
 
 Always finish with `stop`. It closes the game, puts the real engine logs back and runs the check of your real files.
+
+## Test on a save
+
+`--mode new` starts a throwaway game and writes no save. To test on a save, make one in the lab, keep a copy, and continue from it:
+
+```powershell
+python lab.py launch --mode new
+python lab.py call lab_greeter_tests.status
+python lab.py call lab_greeter_tests.make_save
+python lab.py stop
+python lab.py save-fixture first-day
+python lab.py launch --mode continue
+python lab.py call lab_greeter_tests.save_id
+python lab.py stop
+```
+
+Run `status` until it shows `"active": true` before you call `make_save`. `restore-fixture first-day` puts the kept copy back after a test changes it. The lab never copies your real saves.
 
 ## Commands
 

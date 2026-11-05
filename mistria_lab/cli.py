@@ -52,7 +52,7 @@ def doctor(cfg) -> int:
     row(not others, 'one game copy for MOMI to find', ', '.join(others))
     running = winapi.game_processes()
     row(not running, 'no game running', str(running) if running else '')
-    row(cfg.game.exists(), 'lab copy built', str(cfg.game) if cfg.game.exists() else 'run: python lab.py setup')
+    print('ok    lab copy built: ' + str(cfg.game) if cfg.game.exists() else 'next  lab copy not built yet: run python lab.py setup')
     print('no problems found' if not problems else f'{problems} item(s) to fix')
     return 1 if problems else 0
 
