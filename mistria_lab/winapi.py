@@ -26,10 +26,12 @@ class ProcessInfo(ctypes.Structure):
     _fields_ = [('hProcess', wt.HANDLE), ('hThread', wt.HANDLE), ('dwProcessId', wt.DWORD), ('dwThreadId', wt.DWORD)]
 
 
-def start_hidden(exe: Path, args: list[str], cwd: Path, env: dict) -> int:
+def start_hidden(exe: Path, args: list[str], cwd: Path, env: dict, timeout: float = 60) -> int:
     """Start a process on a separate desktop. It renders there and never shows on screen or takes keyboard focus.
 
-    Windows removes the desktop after the last process on it closes.
+    Windows removes the desktop once no process uses it and no handle is open. The game attaches to it during
+    startup, so this function keeps its handle open until the game has a window there. If it returned sooner and
+    Python exited, the desktop would be removed from under the starting game, and the game would die.
     """
     k, u = ctypes.windll.kernel32, ctypes.windll.user32
     k.CreateProcessW.argtypes = [wt.LPCWSTR, wt.LPWSTR, ctypes.c_void_p, ctypes.c_void_p, wt.BOOL, wt.DWORD,
@@ -58,7 +60,28 @@ def start_hidden(exe: Path, args: list[str], cwd: Path, env: dict) -> int:
     if not ok:
         raise OSError(f'could not start {exe}: Windows error {ctypes.GetLastError()}')
     k.CloseHandle(pi.hThread)
+    k.GetExitCodeProcess.argtypes = [wt.HANDLE, ctypes.POINTER(wt.DWORD)]
+    callback_type = ctypes.WINFUNCTYPE(wt.BOOL, wt.HWND, wt.LPARAM)
+    u.EnumDesktopWindows.argtypes = [wt.HANDLE, callback_type, wt.LPARAM]
+    found: list = []
+
+    def visit(hwnd, _):
+        owner = wt.DWORD()
+        u.GetWindowThreadProcessId(hwnd, ctypes.byref(owner))
+        if owner.value == pi.dwProcessId:
+            found.append(hwnd)
+        return True
+
+    callback = callback_type(visit)
+    deadline = time.monotonic() + timeout
+    code = wt.DWORD(STILL_ACTIVE)
+    while not found and code.value == STILL_ACTIVE and time.monotonic() < deadline:
+        time.sleep(0.1)
+        u.EnumDesktopWindows(desktop, callback, 0)
+        k.GetExitCodeProcess(pi.hProcess, ctypes.byref(code))
     k.CloseHandle(pi.hProcess)
+    if not found:
+        raise OSError(f'the game did not open a window on the hidden desktop (exit code {code.value})')
     return pi.dwProcessId
 
 

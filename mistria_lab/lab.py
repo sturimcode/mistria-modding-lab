@@ -208,6 +208,8 @@ class Lab:
         self.require_no_game()
         target = cfg.work / 'fixtures' / name
         require(not target.exists(), f'fixture {name} already exists')
+        require(any((cfg.profile / 'saves').glob('*')) if (cfg.profile / 'saves').exists() else False,
+                'the lab profile has no saves to keep. Make one first.')
         target.mkdir(parents=True)
         for part in ('saves', 'mod_data'):
             if (cfg.profile / part).exists():
