@@ -213,4 +213,4 @@ The code and sample mods here are under the [MIT License](LICENSE).
 
 This repo contains no game files, game scripts, saves or MOMI binaries. The lab copies files from your own install, on your own PC, and they stay there. Do not commit or share the `work` folder. It contains the game. Your use of the game remains subject to [NPC Studio's EULA](https://fieldsofmistria.com/eula), which you should read yourself. MOMI and MMAPI are separate projects under their own licenses (GPL-3.0, with additional terms for MMAPI).
 
-Fields of Mistria is a trademark of its owner. The names here only describe what this tool works with.
+Fields of Mistria belongs to NPC Studio. The names here only describe what this tool works with.
